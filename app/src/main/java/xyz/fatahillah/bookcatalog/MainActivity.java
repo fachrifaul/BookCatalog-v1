@@ -1,8 +1,10 @@
 package xyz.fatahillah.bookcatalog;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Book> bookArrayList;
     EditText keywordText;
     Button searchButton;
+    ProgressDialog progressDialog;
 
     private static final String BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
@@ -30,8 +33,26 @@ public class MainActivity extends AppCompatActivity {
         keywordText = (EditText) findViewById(R.id.keywords_edit_text);
         searchButton = (Button) findViewById(R.id.search_button);
         listView = (ListView) findViewById(R.id.book_list_view);
+        searchButton = (Button) findViewById(R.id.search_button);
 
-        bookAdapter = new BookAdapter(MainActivity.this, bookArrayList);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        bookAdapter = new BookAdapter(MainActivity.this, new ArrayList<Book>());
+        listView.setAdapter(bookAdapter);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                progressDialog.show();
+
+                BookAsyncTask task = new BookAsyncTask();
+                task.execute();
+            }
+        });
+
     }
 
     private class BookAsyncTask extends AsyncTask<URL, Void, ArrayList<Book>> {
@@ -44,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<Book> bookList) {
+            progressDialog.dismiss();
+
         }
 
     }
