@@ -16,8 +16,8 @@ import java.util.List;
 
 public class BookAdapter extends ArrayAdapter<Book> {
 
-    public BookAdapter(Context context, List<Book> scoreList) {
-        super(context, R.layout.book_item, scoreList);
+    public BookAdapter(Context context, List<Book> bookList) {
+        super(context, R.layout.book_item, bookList);
     }
 
     public static class ViewHolder{
