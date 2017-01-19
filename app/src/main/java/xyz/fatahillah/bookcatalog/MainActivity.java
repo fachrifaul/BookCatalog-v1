@@ -1,12 +1,15 @@
 package xyz.fatahillah.bookcatalog;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -53,6 +56,24 @@ public class MainActivity extends AppCompatActivity {
 
         bookAdapter = new BookAdapter(MainActivity.this, new ArrayList<Book>());
         listView.setAdapter(bookAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView,
+                                    View view, int i, long l) {
+
+                Book book = bookArrayList.get(i);
+
+                //convert String url menjadi URI object
+                Uri bookUri = Uri.parse(book.getBookInfoLink());
+
+                //create new intent untuk membuka halaman website
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, bookUri);
+
+                //mengirim intent untuk membuka website
+                startActivity(websiteIntent);
+
+            }
+        });
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,16 +101,16 @@ public class MainActivity extends AppCompatActivity {
             String jsonResponse = "";
             try {
                 jsonResponse = makeHttpRequest(url);
-                // the function will be declared later. `makeHttpRequest()` return String formated JSON.
+                // the function will be declared later.
+                // `makeHttpRequest()` return String formated JSON.
             } catch (IOException e) {
                 Log.e("MainActivity", "IOException", e);
                 // if error happened, we log the error
             }
 
-            ArrayList<Book> books =
-                    extractBookInfoFromJson(jsonResponse); // method declared later
+            bookArrayList = extractBookInfoFromJson(jsonResponse); // method declared later
 
-            return books;
+            return bookArrayList;
         }
 
         @Override
@@ -220,8 +241,15 @@ public class MainActivity extends AppCompatActivity {
                 if (bookInfo.optString("infoLink") != null)
                     infoLink = bookInfo.optString("infoLink");
 
+                //get cover image book
+                String urlCover = "";
+                JSONObject coverInfoLink = bookInfo.getJSONObject("imageLinks");
+                urlCover = coverInfoLink.getString("thumbnail");
+
                 // Add book information info into books array
-                books.add(new Book(title, authors, description, infoLink));
+                books.add(new Book(title, authors,
+                        description, infoLink,
+                        urlCover));
             }
 
         } catch (JSONException e) {

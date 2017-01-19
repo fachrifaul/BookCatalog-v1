@@ -9,12 +9,16 @@ public class Book {
     private String[] mBookAuthors;
     private String mBookDescription;
     private String mBookInfoLink;
+    private String mBookCover;
 
-    public Book(String bookTitle, String[] bookAuthors, String bookDescription, String bookInfoLink) {
+    public Book(String bookTitle, String[] bookAuthors,
+                String bookDescription, String bookInfoLink,
+                String bookCover) {
         mBookTitle = bookTitle;
         mBookAuthors = bookAuthors;
         mBookDescription = bookDescription;
         mBookInfoLink = bookInfoLink;
+        mBookCover = bookCover;
     }
 
     public String getBookTitle() {
@@ -42,5 +46,9 @@ public class Book {
 
     public String getBookInfoLink() {
         return mBookInfoLink;
+    }
+
+    public String getBookCover() {
+        return mBookCover;
     }
 }
